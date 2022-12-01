@@ -1,9 +1,9 @@
 [project]
 name = "aicsairtable"
-version = "3.0.0"  # Do not edit manually; managed by bumpversion
+version = "0.0.0"  # Do not edit manually; managed by bumpversion
 description = "A package with tools to access AICS airtable data"
 authors = [
-    {name = "AICS Software", email="!AICS_SW@alleninstitute"},
+    {name = "AICS Software", email="!AICS_SW@alleninstitute.org"},
 ]
 license = {file = "LICENSE.txt"}
 readme = "README.md"
@@ -39,13 +39,7 @@ homepage = "https://github.com/aics-int/"
 documentation = "https://aics-int.github.io/"
 repository = "https://github.com/aics-int/"
 
-[build-system]
-# https://setuptools.pypa.io/en/latest/build_meta.html
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
 [project.scripts]
-celigo_pipeline_cli= "celigo_pipeline_core.bin.celigo_pipeline_core_cli:main"
 
 [tool.pytest.ini_options]
 addopts = "-v"
@@ -55,5 +49,5 @@ testpaths = [
 
 [build-system]
 # https://setuptools.pypa.io/en/latest/build_meta.html
-requires = ["setuptools", "wheel"]
+requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
