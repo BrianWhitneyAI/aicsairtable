@@ -155,7 +155,7 @@ class ArgoPowerMetrics:
                     row_data.append(pd_current["Date"].max())  # Max Date
                     row_data.append(wavelength)
                     row_data.append(
-                        pd_current["Power_in_mW"].max()
+                        pd_current["Power_in_uW"].max()
                     )  # power in MW of 100% at current date
 
                     experimental_single_system = experimental[
@@ -168,13 +168,13 @@ class ArgoPowerMetrics:
                         experimental_single_system["Date"] == pd_current["Date"].max()
                     ]
                     row_data.append(
-                        experimental_single_system["Power Instruction"].min()
+                        experimental_single_system["Power_instruction (%)"].min()
                     )  # Threshold
 
                     row_data.append(
                         scipy.stats.linregress(
-                            x=pd_current["Power_instruction"],
-                            y=pd_current["Power_in_mW"],
+                            x=pd_current["Power_instruction (%)"],
+                            y=pd_current["Power_in_uW"],
                         ).rvalue
                         ** 2
                     )  # R^2 of current date
