@@ -3,6 +3,10 @@ import math
 import os
 import warnings
 
+from aics_airtable_core import (
+    upload_pandas_dataframe,
+)
+from dotenv import load_dotenv
 import pandas as pd
 import scipy.stats
 
@@ -186,3 +190,50 @@ class ArgoPowerMetrics:
                     row_data = pd.Series(row_data, index=dashboard.columns)
                     dashboard = dashboard.append(row_data, ignore_index=True)
         return dashboard
+
+
+def upload(self, env_vars: str):
+    try:
+        load_dotenv(env_vars)
+
+    except Exception as e:
+        raise EnvironmentError(
+            "The specified env_var is invalid and failed with " + str(e)
+        )
+
+    # Check that all variables from .env are  present
+    if (
+        any(
+            [
+                os.getenv("AIRTABLE_API_KEY"),
+                os.getenv("ARGOLIGHT_POWER_MONTHLY_BASE_KEY"),
+                os.getenv("LASERPOWER_DASHBOARD_TABLE"),
+                os.getenv("LASERPOWER_LINEARITY_TABLE"),
+                os.getenv("LASERPOWER_EXPERIMENTAL_TABLE"),
+            ]
+        )
+        == "None"
+    ):
+        raise EnvironmentError(
+            "Environment variables were not loaded correctly. Some values may be missing."
+        )
+    upload_pandas_dataframe(
+        pandas_dataframe=self.linearity,
+        table=os.getenv("LASERPOWER_LINEARITY_TABLE"),
+        api_key=os.getenv("AIRTABLE_API_KEY"),
+        base_id="",
+    )
+    upload_pandas_dataframe(
+        pandas_dataframe=self.experimental,
+        table=os.getenv("LASERPOWER_EXPERIMENTAL_TABLE"),
+        api_key=os.getenv("AIRTABLE_API_KEY"),
+        base_id=os.getenv("ARGOLIGHT_POWER_MONTHLY_BASE_KEY"),
+    )
+    upload_pandas_dataframe(
+        pandas_dataframe=self.dashboard,
+        table=os.getenv("LASERPOWER_DASHBOARD_TABLE"),
+        api_key=os.getenv("AIRTABLE_API_KEY"),
+        base_id=os.getenv("ARGOLIGHT_POWER_MONTHLY_BASE_KEY"),
+    )
+
+    # add update to most recent records
