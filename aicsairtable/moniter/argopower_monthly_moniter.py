@@ -9,7 +9,8 @@ from watchdog.utils.dirsnapshot import (
 
 from ..argolight_power import ArgoPowerMetrics
 
-LOG_PATH = "CeligoLog"
+LOG_PATH = "ArgoPowerMonthlyLog"
+
 WATCH_PATH = (
     "/allen/aics/microscopy/PRODUCTION/OpticalControl/ArgoLight/ArgoPower_Monthly"
 )
