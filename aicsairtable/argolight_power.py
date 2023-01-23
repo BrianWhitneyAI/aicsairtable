@@ -4,9 +4,12 @@ import os
 import warnings
 
 from aics_airtable_core import (
+    airtable_download,
+    convert_to_dataframe,
     upload_pandas_dataframe,
 )
 from dotenv import load_dotenv
+import numpy as np
 import pandas as pd
 import scipy.stats
 
@@ -48,6 +51,7 @@ class ArgoPowerMetrics:
                 )
             )
         )
+
         # get data
         self.metadata = ArgoPowerMetrics.build_metadata(self.file_path)
         self.datasheet = ArgoPowerMetrics.build_datasheet(self.file_path)
@@ -235,4 +239,62 @@ class ArgoPowerMetrics:
             base_id=os.getenv("ARGOLIGHT_POWER_MONTHLY_BASE_KEY"),
         )
 
-        # add update to most recent records
+    @staticmethod
+    def update_current(env_vars: str):
+        try:
+            load_dotenv(env_vars)
+
+        except Exception as e:
+            raise EnvironmentError(
+                "The specified env_var is invalid and failed with " + str(e)
+            )
+
+        # Check that all variables from .env are  present
+        if (
+            any(
+                [
+                    os.getenv("AIRTABLE_API_KEY"),
+                    os.getenv("ARGOLIGHT_POWER_MONTHLY_BASE_KEY"),
+                    os.getenv("LASERPOWER_DASHBOARD_TABLE"),
+                ]
+            )
+            == "None"
+        ):
+            raise EnvironmentError(
+                "Environment variables were not loaded correctly. Some values may be missing."
+            )
+
+        dashboard = airtable_download(
+            table=os.getenv("LASERPOWER_DASHBOARD_TABLE"),
+            params_dict={},
+            api_key=os.getenv("AIRTABLE_API_KEY"),
+            base_id=os.getenv("ARGOLIGHT_POWER_MONTHLY_BASE_KEY"),
+        )
+
+        dashboard_df = convert_to_dataframe(dashboard)
+
+        dashboard_df_current = pd.DataFrame(
+            columns=dashboard_df.columns.values.tolist()
+        )
+
+        systems = dashboard_df["System"].cat.categories
+        for system in systems:
+            system_df = dashboard_df[dashboard_df["System"] == system]
+            wavelengths = system_df["Wavelength"].cat.categories
+            for wavelength in wavelengths:
+                wavelength_df = system_df[system_df["Wavelength"] == wavelength]
+                if not wavelength_df.empty:
+                    most_recent_date = wavelength_df["StartDate"].max()
+                    wavelength_df["Current"] = np.where(
+                        wavelength_df["Date"] == most_recent_date, True, False
+                    )
+
+                    pd.concat(dashboard_df_current, wavelength_df)
+                    # find most recent and set to "Status" to current = True
+
+        upload_pandas_dataframe(
+            pandas_dataframe=dashboard_df_current,
+            table=os.getenv("LASERPOWER_DASHBOARD_TABLE"),
+            api_key=os.getenv("AIRTABLE_API_KEY"),
+            base_id=os.getenv("ARGOLIGHT_POWER_MONTHLY_BASE_KEY"),
+        )

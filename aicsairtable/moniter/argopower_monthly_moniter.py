@@ -58,8 +58,8 @@ class ArgoPowerMonthlyMonitor:
             if ".csv" in path:
                 print(path)
             try:
-                ArgoPower = ArgoPowerMetrics(path, ENV_VARS)
-                ArgoPower.upload()
+                ArgoPower = ArgoPowerMetrics(path)
+                ArgoPower.upload(ENV_VARS)
             except Exception as e:
                 print(str(e))
                 pass
