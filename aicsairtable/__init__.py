@@ -5,6 +5,7 @@ from aics_airtable_core import (
     upload_pandas_dataframe,
 )
 from argolight_power import ArgoPowerMetrics
+from argolight_power_utils import update_current
 
 """Top-level package for aicsairtable."""
 
