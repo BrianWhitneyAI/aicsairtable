@@ -3,12 +3,13 @@ import math
 import os
 import warnings
 
-from aics_airtable_core import (
-    upload_pandas_dataframe,
-)
 from dotenv import load_dotenv
 import pandas as pd
 import scipy.stats
+
+from .aics_airtable_core import (
+    upload_pandas_dataframe,
+)
 
 warnings.filterwarnings("ignore")
 

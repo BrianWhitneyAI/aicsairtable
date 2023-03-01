@@ -1,11 +1,11 @@
-from aics_airtable_core import (
+from .aics_airtable_core import (
     airtable_download,
     airtable_upload,
     convert_to_dataframe,
     upload_pandas_dataframe,
 )
-from argolight_power import ArgoPowerMetrics
-from argolight_power_utils import update_current
+from .argolight_power import ArgoPowerMetrics
+from .argolight_power_utils import update_current
 
 """Top-level package for aicsairtable."""
 

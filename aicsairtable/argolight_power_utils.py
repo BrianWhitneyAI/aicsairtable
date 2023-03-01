@@ -1,12 +1,13 @@
 import os
 
-from aics_airtable_core import (
+from dotenv import load_dotenv
+import numpy as np
+
+from .aics_airtable_core import (
     airtable_download,
     convert_to_dataframe,
     upload_pandas_dataframe,
 )
-from dotenv import load_dotenv
-import numpy as np
 
 
 def update_current(env_vars: str):
